@@ -1,0 +1,339 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>胺基酸地獄默寫特訓</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@400;700&family=JetBrains+Mono:wght@500&display=swap');
+        
+        body { font-family: 'Noto Sans TC', sans-serif; }
+        .mono { font-family: 'JetBrains Mono', monospace; }
+
+        .input-box {
+            border: 2px solid #e2e8f0;
+            border-radius: 0.5rem;
+            padding: 0.5rem;
+            font-size: 1rem;
+            transition: all 0.2s;
+            width: 100%;
+        }
+        .input-box:focus {
+            outline: none;
+            border-color: #3b82f6;
+            box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+        }
+        .input-box.correct {
+            border-color: #22c55e;
+            background-color: #f0fdf4;
+            color: #15803d;
+        }
+        .input-box.incorrect {
+            border-color: #ef4444;
+            background-color: #fef2f2;
+            color: #991b1b;
+        }
+
+        .anim-shake { animation: shake 0.4s cubic-bezier(.36,.07,.19,.97) both; }
+        @keyframes shake {
+            10%, 90% { transform: translate3d(-1px, 0, 0); }
+            20%, 80% { transform: translate3d(2px, 0, 0); }
+            30%, 50%, 70% { transform: translate3d(-4px, 0, 0); }
+            40%, 60% { transform: translate3d(4px, 0, 0); }
+        }
+    </style>
+</head>
+<body class="bg-gray-50 min-h-screen flex flex-col">
+
+    <div class="max-w-3xl mx-auto w-full p-4 flex-grow flex flex-col">
+        
+        <!-- Header -->
+        <header class="mb-6 text-center">
+            <h1 class="text-2xl font-black text-slate-800 mb-2">🩸 胺基酸地獄默寫</h1>
+            <p class="text-sm text-slate-500">不給選項，請直接默寫出完整的中英文與縮寫</p>
+        </header>
+
+        <!-- Quiz Area -->
+        <div id="quiz-area" class="bg-white rounded-2xl shadow-xl border border-gray-200 overflow-hidden flex-grow flex flex-col">
+            
+            <!-- Question Header -->
+            <div class="bg-slate-800 p-6 text-white text-center relative">
+                <span class="text-xs font-bold bg-blue-500 px-2 py-1 rounded text-white mb-2 inline-block" id="q-progress">Q1</span>
+                <h2 class="text-2xl font-bold leading-relaxed" id="q-title">題目載入中...</h2>
+                <p class="text-slate-400 text-sm mt-2" id="q-hint"></p>
+            </div>
+
+            <!-- Input Area -->
+            <div class="p-6 space-y-4 flex-grow" id="inputs-container">
+                <!-- Rows will be injected here -->
+            </div>
+
+            <!-- Feedback Area (Hidden by default) -->
+            <div id="feedback-area" class="bg-gray-50 p-6 border-t border-gray-200 hidden">
+                <h3 class="font-bold text-gray-700 mb-3">正確答案對照：</h3>
+                <div id="correct-answers-list" class="space-y-2 text-sm"></div>
+            </div>
+
+            <!-- Controls -->
+            <div class="p-6 border-t border-gray-100 bg-gray-50 flex justify-between items-center">
+                <div class="text-sm font-bold text-slate-400" id="status-text">請填寫所有欄位</div>
+                <button onclick="checkAnswers()" id="action-btn" class="bg-blue-600 hover:bg-blue-700 text-white font-bold py-3 px-8 rounded-xl shadow-lg transform transition active:scale-95 text-lg">
+                    交卷檢查
+                </button>
+            </div>
+        </div>
+
+    </div>
+
+    <script>
+        // 資料庫：依照你的筆記分類
+        const categories = [
+            {
+                name: "含硫胺基酸 (Sulfur)",
+                hint: "含有硫原子，共 2 個",
+                items: [
+                    { ch: "半胱胺酸", en: "Cysteine", abbr: "Cys" },
+                    { ch: "甲硫胺酸", en: "Methionine", abbr: "Met" }
+                ]
+            },
+            {
+                name: "酸基胺基酸 (Acidic)",
+                hint: "側鏈帶有羧基，共 2 個",
+                items: [
+                    { ch: "天門冬胺酸", en: "Aspartic acid", abbr: "Asp" },
+                    { ch: "麩胺酸", en: "Glutamic acid", abbr: "Glu" }
+                ]
+            },
+            {
+                name: "鹼性胺基酸 (Basic)",
+                hint: "側鏈帶有含氮官能基，共 3 個",
+                items: [
+                    { ch: "離胺酸", en: "Lysine", abbr: "Lys" },
+                    { ch: "精胺酸", en: "Arginine", abbr: "Arg" },
+                    { ch: "組織胺酸", en: "Histidine", abbr: "His" }
+                ]
+            },
+            {
+                name: "芳香族胺基酸 (Aromatic)",
+                hint: "含有苯環或吲哚環，共 3 個",
+                items: [
+                    { ch: "苯丙胺酸", en: "Phenylalanine", abbr: "Phe" },
+                    { ch: "酪胺酸", en: "Tyrosine", abbr: "Tyr" },
+                    { ch: "色胺酸", en: "Tryptophan", abbr: "Trp" }
+                ]
+            },
+            {
+                name: "羥基胺基酸 (Hydroxyl)",
+                hint: "側鏈帶有 -OH 基 (脂肪族+芳香族)，共 3 個",
+                items: [
+                    { ch: "絲胺酸", en: "Serine", abbr: "Ser" },
+                    { ch: "酥胺酸", en: "Threonine", abbr: "Thr" },
+                    { ch: "酪胺酸", en: "Tyrosine", abbr: "Tyr" }
+                ]
+            },
+            {
+                name: "醯胺基胺基酸 (Amide)",
+                hint: "酸性胺基酸的衍生物，共 2 個",
+                items: [
+                    { ch: "天門冬素", en: "Asparagine", abbr: "Asn" },
+                    { ch: "麩胺", en: "Glutamine", abbr: "Gln" }
+                ]
+            },
+            {
+                name: "支鏈胺基酸 (BCAA)",
+                hint: "疏水性分支側鏈，共 3 個",
+                items: [
+                    { ch: "白胺酸", en: "Leucine", abbr: "Leu" },
+                    { ch: "異白胺酸", en: "Isoleucine", abbr: "Ile" },
+                    { ch: "纈胺酸", en: "Valine", abbr: "Val" }
+                ]
+            },
+            {
+                name: "亞胺基酸 (Imino / Cyclic)",
+                hint: "唯一的環狀非芳香族，共 1 個",
+                items: [
+                    { ch: "脯胺酸", en: "Proline", abbr: "Pro" }
+                ]
+            }
+        ];
+
+        let currentCategory = null;
+        let isReviewing = false;
+        let usedCategories = [];
+
+        function initGame() {
+            nextQuestion();
+        }
+
+        function nextQuestion() {
+            // Pick a random category not recently used if possible
+            let available = categories.filter(c => !usedCategories.includes(c));
+            if (available.length === 0) {
+                usedCategories = [];
+                available = categories;
+            }
+            const randIndex = Math.floor(Math.random() * available.length);
+            currentCategory = available[randIndex];
+            usedCategories.push(currentCategory);
+
+            // UI Reset
+            document.getElementById('q-title').innerText = `請寫出：${currentCategory.name}`;
+            document.getElementById('q-hint').innerText = currentCategory.hint;
+            document.getElementById('feedback-area').classList.add('hidden');
+            document.getElementById('action-btn').innerText = "交卷檢查";
+            document.getElementById('action-btn').onclick = checkAnswers;
+            document.getElementById('action-btn').className = "bg-blue-600 hover:bg-blue-700 text-white font-bold py-3 px-8 rounded-xl shadow-lg transform transition active:scale-95 text-lg";
+            isReviewing = false;
+
+            // Generate Inputs
+            const container = document.getElementById('inputs-container');
+            container.innerHTML = '';
+
+            // We shuffle the items so user doesn't just memorize order, 
+            // BUT for checking, we need to match user input to ANY correct item.
+            // To make UI simple, we just generate N rows.
+            
+            for (let i = 0; i < currentCategory.items.length; i++) {
+                const row = document.createElement('div');
+                row.className = "grid grid-cols-1 md:grid-cols-12 gap-2 p-3 bg-gray-50 rounded-lg border border-dashed border-gray-300";
+                row.innerHTML = `
+                    <div class="md:col-span-1 flex items-center justify-center font-bold text-gray-400">#${i+1}</div>
+                    <div class="md:col-span-3">
+                        <input type="text" class="input-box" placeholder="中文名稱" data-type="ch">
+                    </div>
+                    <div class="md:col-span-5">
+                        <input type="text" class="input-box mono" placeholder="英文全名 (English)" data-type="en">
+                    </div>
+                    <div class="md:col-span-3">
+                        <input type="text" class="input-box mono" placeholder="縮寫" data-type="abbr">
+                    </div>
+                `;
+                container.appendChild(row);
+            }
+            
+            // Focus first input
+            setTimeout(() => document.querySelector('input').focus(), 100);
+        }
+
+        function normalize(str) {
+            return str ? str.trim().toLowerCase().replace(/\s+/g, '') : '';
+        }
+
+        function checkAnswers() {
+            if (isReviewing) {
+                nextQuestion();
+                return;
+            }
+
+            const rows = document.getElementById('inputs-container').children;
+            let allCorrect = true;
+            
+            // Logic: Since order doesn't matter (e.g., user can write Met then Cys, or Cys then Met),
+            // We need to match each ROW to the BEST AVAILABLE correct item.
+            
+            let availableItems = [...currentCategory.items]; // Copy
+            const userAnswers = [];
+
+            // 1. Collect all user inputs
+            for (let i = 0; i < rows.length; i++) {
+                const inputs = rows[i].querySelectorAll('input');
+                userAnswers.push({
+                    rowElement: rows[i],
+                    inputs: inputs,
+                    ch: normalize(inputs[0].value),
+                    en: normalize(inputs[1].value),
+                    abbr: normalize(inputs[2].value)
+                });
+            }
+
+            // 2. Validate
+            // Simple heuristic: Try to match user's English or Abbr or Chinese to a correct item
+            userAnswers.forEach(ans => {
+                let matchIndex = -1;
+                
+                // Try to find a match in available items
+                matchIndex = availableItems.findIndex(item => 
+                    (ans.en && normalize(item.en) === ans.en) || 
+                    (ans.abbr && normalize(item.abbr) === ans.abbr) ||
+                    (ans.ch && normalize(item.ch) === ans.ch)
+                );
+
+                if (matchIndex !== -1) {
+                    // We found a likely intended target. Now check STRICTLY all fields.
+                    const target = availableItems[matchIndex];
+                    let rowCorrect = true;
+
+                    // Check Chinese
+                    if (ans.ch !== normalize(target.ch)) {
+                        ans.inputs[0].classList.add('incorrect');
+                        rowCorrect = false;
+                    } else {
+                        ans.inputs[0].classList.add('correct');
+                    }
+
+                    // Check English
+                    if (ans.en !== normalize(target.en)) {
+                        ans.inputs[1].classList.add('incorrect');
+                        rowCorrect = false;
+                    } else {
+                        ans.inputs[1].classList.add('correct');
+                    }
+
+                    // Check Abbr
+                    if (ans.abbr !== normalize(target.abbr)) {
+                        ans.inputs[2].classList.add('incorrect');
+                        rowCorrect = false;
+                    } else {
+                        ans.inputs[2].classList.add('correct');
+                    }
+
+                    if (!rowCorrect) allCorrect = false;
+                    
+                    // Remove this item from available so we don't match it again
+                    availableItems.splice(matchIndex, 1);
+
+                } else {
+                    // No match found at all (completely wrong or duplicate)
+                    ans.inputs.forEach(input => input.classList.add('incorrect'));
+                    allCorrect = false;
+                }
+            });
+
+            // Show Correct Answers
+            const feedbackList = document.getElementById('correct-answers-list');
+            feedbackList.innerHTML = '';
+            currentCategory.items.forEach(item => {
+                const div = document.createElement('div');
+                div.className = "flex justify-between items-center bg-white p-2 rounded border border-gray-200";
+                div.innerHTML = `
+                    <span class="font-bold text-gray-800">${item.ch}</span>
+                    <span class="font-mono text-blue-600">${item.en}</span>
+                    <span class="font-mono font-bold text-gray-500 bg-gray-100 px-2 rounded">${item.abbr}</span>
+                `;
+                feedbackList.appendChild(div);
+            });
+            document.getElementById('feedback-area').classList.remove('hidden');
+
+            // Update Button
+            const btn = document.getElementById('action-btn');
+            if (allCorrect) {
+                btn.innerText = "太神啦！全對！下一題 ->";
+                btn.className = "bg-green-600 hover:bg-green-700 text-white font-bold py-3 px-8 rounded-xl shadow-lg transform transition active:scale-95 text-lg";
+                // Trigger confetti or shake
+            } else {
+                btn.innerText = "沒關係，訂正後下一題 ->";
+                btn.className = "bg-slate-600 hover:bg-slate-700 text-white font-bold py-3 px-8 rounded-xl shadow-lg transform transition active:scale-95 text-lg";
+                document.getElementById('quiz-area').classList.add('anim-shake');
+                setTimeout(()=>document.getElementById('quiz-area').classList.remove('anim-shake'), 500);
+            }
+            
+            isReviewing = true;
+        }
+
+        // Init
+        initGame();
+
+    </script>
+</body>
+</html>
