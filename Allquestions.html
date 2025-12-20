@@ -3,17 +3,17 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>生化刷題神器 v5.0 PRO - 終極版</title>
-    <!-- Tailwind CSS: 負責排版與美化 -->
+    <title>生化刷題神器 v6.0 - 混合特訓</title>
+    <!-- Tailwind CSS: 負責 UI 介面美化 -->
     <script src="https://cdn.tailwindcss.com"></script>
-    <!-- Font Awesome: 負責各種動態小圖示 -->
+    <!-- Font Awesome: 負責圖示 -->
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@400;500;700;900&family=JetBrains+Mono&display=swap');
         body { font-family: 'Noto Sans TC', sans-serif; -webkit-tap-highlight-color: transparent; }
         .mono { font-family: 'JetBrains Mono', monospace; }
         
-        /* 基礎動畫 */
+        /* 動畫效果：淡入與抖動 */
         .fade-in { animation: fadeIn 0.4s ease-out; }
         @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
         
@@ -21,113 +21,80 @@
         @keyframes shake { 0%, 100% { transform: translateX(0); } 25% { transform: translateX(-5px); } 75% { transform: translateX(5px); } }
 
         .btn-active:active { transform: scale(0.96); transition: 0.1s; }
-
-        /* 手寫題專用：輸入框底線效果 */
-        .typing-input {
-            border: none;
-            border-bottom: 3px solid #e2e8f0;
-            background: transparent;
-            transition: all 0.3s;
-        }
-        .typing-input:focus {
-            outline: none;
-            border-bottom-color: #6366f1;
-            background: #f8fafc;
-        }
     </style>
 </head>
 <body class="bg-slate-100 text-slate-800 min-h-screen flex flex-col">
 
-    <!-- 主容器 -->
+    <!-- 主 App 容器 -->
     <div id="app" class="max-w-md mx-auto w-full min-h-screen bg-white shadow-2xl flex flex-col relative overflow-hidden">
         
-        <!-- Header: 頂部導航 -->
+        <!-- 頂部標題列 -->
         <header class="bg-slate-900 text-white p-4 flex justify-between items-center shadow-lg z-20">
             <div class="flex items-center gap-2 cursor-pointer" onclick="renderHome()">
-                <div class="bg-gradient-to-tr from-cyan-400 to-blue-600 text-white w-8 h-8 rounded-lg flex items-center justify-center font-black shadow-lg">B</div>
-                <h1 class="font-bold text-lg">生化大師 <span class="text-[10px] bg-cyan-500 text-black px-1 rounded ml-1">V5.0</span></h1>
+                <div class="bg-gradient-to-tr from-indigo-400 to-blue-600 text-white w-8 h-8 rounded-lg flex items-center justify-center font-black">B</div>
+                <h1 class="font-bold text-lg">刷題王 <span class="text-[10px] bg-indigo-500 text-white px-1 rounded ml-1 tracking-tighter">V6.0 HYBRID</span></h1>
             </div>
             <div class="flex gap-2">
-                <button onclick="confirmReset()" class="text-slate-400 hover:text-white px-2"><i class="fas fa-redo-alt"></i></button>
-                <button onclick="showLeaderboard()" class="text-xs bg-indigo-600 hover:bg-indigo-500 px-3 py-1.5 rounded-full shadow-lg flex items-center gap-1 transition">
-                    <i class="fas fa-skull"></i> 錯題排行榜
+                <button onclick="confirmReset()" class="text-slate-400 hover:text-white px-2"><i class="fas fa-sync-alt"></i></button>
+                <button onclick="showLeaderboard()" class="text-xs bg-indigo-600 hover:bg-indigo-500 px-3 py-1.5 rounded-full shadow-lg transition">
+                    <i class="fas fa-trophy mr-1"></i> 排行榜
                 </button>
             </div>
         </header>
 
-        <!-- 主要內容區：透過 JavaScript 切換 HTML 內容 -->
+        <!-- 內容區域 -->
         <main id="content-area" class="flex-grow flex flex-col relative overflow-y-auto bg-slate-50">
-            <!-- 這裡是動態生成的內容 -->
+            <!-- 內容由 JS 動態生成 -->
         </main>
 
     </div>
 
     <script>
         // ==========================================
-        // 1. 【題庫核心】 
+        // 1. 【題庫資料庫】 這是你要擴充題目之處
         // ==========================================
-        // 類別說明：
-        // type: "multiple" -> 選擇題 (選項隨機)
-        // type: "handwriting" -> 手寫題 (自我評分模式)
         const questionBank = [
-            // --- 選擇題範例 ---
+            // --- 選擇題格式 (multiple) ---
             { 
-                id: "ch3_1", 
-                chapter: "Ch3", 
-                type: "multiple",
+                id: "ch3_1", chapter: "Ch3", type: "multiple",
                 q: "下列何者為中性胺基酸？", 
                 options: ["甘胺酸 (Glycine)", "離胺酸 (Lysine)", "組胺酸 (Histidine)", "麩胺酸 (Glutamic acid)"], 
-                rationale: "Glycine 的側鏈只有一個 H，分不出極性也無電荷，故為中性。" 
+                rationale: "Glycine 的側鏈只有一個 H，非極性中性。其餘為酸鹼性。" 
             },
             { 
-                id: "ch3_45", 
-                chapter: "Ch3", 
-                type: "multiple",
-                q: "鐮刀型貧血是由於血紅素 β 鏈第 6 位的 Glutamate 被取代為？", 
-                options: ["Valine (纈胺酸)", "Glycine", "Leucine", "Isoleucine"], 
-                rationale: "記住口訣：Sickle = Valine (SV)。疏水性側鏈導致分子聚合。" 
+                id: "ch3_45", chapter: "Ch3", type: "multiple",
+                q: "鐮刀型貧血是 Glutamate 被誰取代？", 
+                options: ["Valine (纈胺酸)", "Glycine", "Lysine", "Aspartate"], 
+                rationale: "極性變疏水性，記住 SV (Sickle Valine)。" 
             },
-            
-            // --- 手寫題範例 (這是你要的新功能！) ---
+            // --- 手寫題格式 (handwriting) ---
             {
-                id: "hw_1",
-                chapter: "名詞解釋",
-                type: "handwriting",
-                q: "請寫出『變性 (Denaturation)』的定義，並說明它會破壞哪些結構？",
-                ans: "變性是指蛋白質的高級結構（二、三、四級）受到化學或物理因素影響而打開，導致生物活性喪失。但『一級結構（胜肽鍵）』不會被破壞。",
-                keywords: ["二", "三", "四", "一級", "活性"], // 系統會自動檢查你有沒有寫到這些字
-                rationale: "變性不等於水解，所以胜肽鍵是完整的。"
+                id: "hw_1", chapter: "名詞解釋", type: "handwriting",
+                q: "請定義蛋白質的「變性作用 (Denaturation)」，並列出不會被破壞的結構層級。",
+                ans: "變性是指蛋白質的二、三、四級結構因物理或化學因素被破壞而展開。一級結構（胜肽鍵）不會被破壞。",
+                keywords: ["二", "三", "四", "一級", "胜肽鍵"], // 輔助檢查關鍵字
+                rationale: "變性不涉及胜肽鍵的水解，所以序列是完整的。"
             },
             {
-                id: "hw_2",
-                chapter: "結構分析",
-                type: "handwriting",
-                q: "解釋為什麼 Proline 被稱為螺旋破壞者 (Helix Breaker)？",
-                ans: "因為 Proline 具有環狀結構，限制了骨架的旋轉角度，且它在胜肽鍵中缺乏與其他胺基酸形成氫鍵所需的醯胺氫 (N-H)。",
-                keywords: ["環狀", "氫鍵", "旋轉"],
-                rationale: "它是亞胺基酸 (Imino acid)，結構天生就跟別人不一樣。"
-            },
-            {
-                id: "hw_3",
-                chapter: "Ch7",
-                type: "handwriting",
-                q: "請列出人體的兩種必需脂肪酸 (中文或英文)。",
+                id: "hw_2", chapter: "Ch7", type: "handwriting",
+                q: "請寫出人體兩種絕對必需脂肪酸的名稱。",
                 ans: "亞麻油酸 (Linoleate) 與 次亞麻油酸 (Alpha-linolenate)。",
                 keywords: ["亞麻油酸", "次亞麻油酸"],
-                rationale: "DHA 和 花生四烯酸可以由這兩者合成，所以嚴格來說這兩者才是源頭。"
+                rationale: "其餘如花生四烯酸或 DHA 可由這兩者合成。"
             }
         ];
 
         // ==========================================
-        // 2. 【狀態管理】 負責記憶與進度
+        // 2. 【狀態管理】 
         // ==========================================
-        const DB_KEY = 'biochem_v5_pro_data';
+        const DB_KEY = 'biochem_v6_hybrid_data';
         let state = {
-            doneIds: [],      // 已經徹底解決的題目 (從牌堆移除)
-            wrongStats: {},   // 錯題計數器： { 'ch3_1': 5 }
+            doneIds: [],      // 已經正確解決的題 ID
+            wrongStats: {},   // 錯題次數統計： { 'id': count }
             currentBatch: [], // 目前這輪 10 題
             batchIndex: 0,
-            score: 0
+            score: 0,
+            mode: 'normal'    // 'normal' 或 'wrong_drill'
         };
 
         function save() { localStorage.setItem(DB_KEY, JSON.stringify(state)); }
@@ -136,39 +103,38 @@
             if (data) state = JSON.parse(data);
         }
 
-        // ==========================================
-        // 3. 【工具函數】 
-        // ==========================================
-        
-        // 選項隨機洗牌
+        // 洗牌函數
         function shuffle(arr) { return arr.sort(() => Math.random() - 0.5); }
 
         // ==========================================
-        // 4. 【核心控制】 
+        // 3. 【核心流程控制】 
         // ==========================================
 
-        function startMode(mode) {
+        function startRound(mode = 'normal') {
+            state.mode = mode;
             let pool = [];
             
             if (mode === 'wrong_drill') {
-                // 從排行榜點進來的「錯題殲滅」
+                // 專攻有錯過的題目
                 const wrongIds = Object.keys(state.wrongStats).filter(id => state.wrongStats[id] > 0);
                 pool = questionBank.filter(q => wrongIds.includes(q.id));
-                if (pool.length === 0) { alert("恭喜！你目前沒有錯題！"); return; }
+                if (pool.length === 0) { alert("目前沒有錯題需要特訓！"); return; }
             } else {
-                // 正常的刷題模式 (排除已做過的)
+                // 刷還沒做對過的題目 (牌組消耗模式)
                 pool = questionBank.filter(q => !state.doneIds.includes(q.id));
-                if (pool.length === 0) { renderAllDone(); return; }
+                if (pool.length === 0) { renderAllClear(); return; }
             }
 
-            const batch = shuffle([...pool]).slice(0, 10);
-            
-            state.currentBatch = batch.map(q => {
+            const size = Math.min(10, pool.length);
+            const selected = shuffle([...pool]).slice(0, size);
+
+            // 準備題目 (選擇題要做選項隨機化)
+            state.currentBatch = selected.map(q => {
                 if (q.type === 'multiple') {
                     const opts = q.options.map((t, i) => ({ text: t, isCorrect: i === 0 }));
                     return { ...q, randomOptions: shuffle(opts) };
                 }
-                return q; // 手寫題直接回傳
+                return q;
             });
 
             state.batchIndex = 0;
@@ -177,21 +143,23 @@
             renderQuiz();
         }
 
-        // 單題特訓
-        function drillOne(id) {
+        // 單題點名特訓 (從排行榜進來)
+        function startSingleDrill(id) {
             const q = questionBank.find(x => x.id === id);
             if (!q) return;
-            state.currentBatch = [q];
+            const batchItem = {...q};
             if (q.type === 'multiple') {
                 const opts = q.options.map((t, i) => ({ text: t, isCorrect: i === 0 }));
-                state.currentBatch[0].randomOptions = shuffle(opts);
+                batchItem.randomOptions = shuffle(opts);
             }
+            state.currentBatch = [batchItem];
             state.batchIndex = 0;
+            state.score = 0;
             renderQuiz();
         }
 
         // ==========================================
-        // 5. 【畫面渲染】 
+        // 4. 【介面渲染】 
         // ==========================================
         const view = document.getElementById('content-area');
 
@@ -214,54 +182,56 @@
             view.innerHTML = `
                 <div class="p-6 flex flex-col items-center justify-center min-h-full space-y-8 fade-in">
                     <div class="text-center">
-                        <h2 class="text-3xl font-black text-slate-800 mb-2">掌握度特訓</h2>
-                        <p class="text-slate-500">剩餘挑戰：<span class="font-bold text-indigo-600">${remaining}</span> / ${total}</p>
+                        <h2 class="text-3xl font-black text-slate-800 mb-2">準備好衝刺了嗎？</h2>
+                        <p class="text-slate-500">題庫總數：${total} | 剩餘：<span class="font-bold text-indigo-600">${remaining}</span> 題</p>
                     </div>
 
-                    <div class="w-full bg-slate-200 rounded-full h-3 overflow-hidden">
-                        <div class="bg-indigo-500 h-full transition-all duration-700" style="width: ${(done/total)*100}%"></div>
+                    <!-- 進度條 -->
+                    <div class="w-full bg-slate-200 rounded-full h-3 overflow-hidden shadow-inner">
+                        <div class="bg-green-500 h-full transition-all duration-1000" style="width: ${(done/total)*100}%"></div>
                     </div>
 
-                    <div class="flex flex-col w-full gap-4">
-                        <button onclick="startMode('normal')" class="bg-slate-900 text-white font-bold py-4 rounded-2xl shadow-xl btn-active text-lg flex items-center justify-center gap-3">
-                            <i class="fas fa-bolt text-yellow-400"></i> 開始混合特訓
+                    <div class="grid grid-cols-1 w-full gap-4">
+                        <button onclick="startRound()" class="bg-slate-900 text-white font-bold py-5 rounded-2xl shadow-xl btn-active text-lg flex items-center justify-center gap-3">
+                            <i class="fas fa-play text-indigo-400"></i> 開始混合模式 (10題)
                         </button>
-                        <button onclick="startMode('wrong_drill')" class="bg-white border-2 border-red-100 text-red-600 font-bold py-4 rounded-2xl shadow-md btn-active text-lg flex items-center justify-center gap-3">
-                            <i class="fas fa-skull"></i> 錯題專項複習
+                        <button onclick="startRound('wrong_drill')" class="bg-white border-2 border-red-100 text-red-600 font-bold py-5 rounded-2xl shadow-md btn-active text-lg flex items-center justify-center gap-3">
+                            <i class="fas fa-skull"></i> 錯題殲滅模式
                         </button>
                     </div>
-
-                    <div class="text-xs text-slate-400 text-center italic">
-                        包含選擇題與手寫題，徹底擊碎盲點。
+                    
+                    <div class="text-[10px] text-slate-400 text-center uppercase tracking-widest leading-loose">
+                        支援選擇題與手寫題<br>自動偵測關鍵字，幫你鞏固記憶
                     </div>
                 </div>
             `;
         }
 
-        // --- 刷題中畫面 ---
+        // --- 刷題主畫面 ---
         function renderQuiz() {
             const q = state.currentBatch[state.batchIndex];
             const num = state.batchIndex + 1;
             const total = state.currentBatch.length;
 
             let html = `
-                <div class="p-5 flex flex-col h-full fade-in">
-                    <div class="flex justify-between text-[10px] font-black text-slate-400 mb-4 tracking-widest">
-                        <span>${q.chapter} | ${q.type === 'multiple' ? '選擇題' : '手寫題'}</span>
-                        <span>${num} / ${total}</span>
+                <div class="p-5 flex flex-col h-full fade-in pb-10">
+                    <div class="flex justify-between items-center text-[10px] font-black text-slate-400 mb-4 tracking-widest uppercase">
+                        <span class="bg-slate-200 px-2 py-0.5 rounded text-slate-600">${q.chapter} | ${q.type === 'multiple' ? '選擇' : '手寫'}</span>
+                        <span>PROGRESS: ${num} / ${total}</span>
                     </div>
 
-                    <div class="bg-white p-6 rounded-2xl border border-slate-100 shadow-sm mb-6">
-                        <h2 class="text-xl font-bold text-slate-800 leading-relaxed">${q.q}</h2>
+                    <div class="bg-white p-6 rounded-2xl border border-slate-100 shadow-sm mb-6 relative overflow-hidden">
+                        <div class="absolute -top-2 -right-2 opacity-5 text-6xl font-black italic text-slate-900">${num}</div>
+                        <h2 class="text-xl font-bold text-slate-800 leading-relaxed relative z-10">${q.q}</h2>
                     </div>
             `;
 
             if (q.type === 'multiple') {
-                // 選擇題版面
+                // 選擇題 UI
                 html += `
                     <div class="space-y-3 flex-grow">
                         ${q.randomOptions.map((o, i) => `
-                            <button onclick="pickChoice(${i})" class="opt-btn w-full text-left p-4 rounded-xl border-2 border-slate-100 hover:border-indigo-500 transition flex gap-3 btn-active bg-white">
+                            <button onclick="handleChoice(${i})" class="opt-btn w-full text-left p-4 rounded-xl border-2 border-slate-100 hover:border-indigo-400 transition flex gap-3 btn-active bg-white">
                                 <div class="w-6 h-6 rounded-full bg-slate-100 text-slate-400 text-[10px] flex items-center justify-center font-bold">${String.fromCharCode(65+i)}</div>
                                 <span class="text-slate-700 font-medium">${o.text}</span>
                             </button>
@@ -269,37 +239,37 @@
                     </div>
                 `;
             } else {
-                // 手寫題版面
+                // 手寫題 UI
                 html += `
                     <div class="flex-grow space-y-4">
-                        <textarea id="handwritten-input" class="w-full h-32 p-4 rounded-xl border-2 border-slate-200 bg-white focus:border-indigo-500 focus:ring-0 transition text-slate-700 placeholder:text-slate-300" placeholder="請在這裡輸入你的回答..."></textarea>
-                        <button id="show-ans-btn" onclick="revealHandwritingAnswer()" class="w-full bg-slate-800 text-white font-bold py-4 rounded-xl shadow-lg btn-active">
-                            輸入完成，查看答案
+                        <textarea id="typing-box" class="w-full h-40 p-4 rounded-2xl border-2 border-slate-200 bg-white focus:border-indigo-500 focus:ring-0 transition text-slate-700 placeholder:text-slate-300" placeholder="請默寫你的答案..."></textarea>
+                        <button id="reveal-btn" onclick="handleRevealHandwriting()" class="w-full bg-slate-800 text-white font-bold py-4 rounded-xl shadow-lg btn-active">
+                            輸入完畢，比對答案
                         </button>
                     </div>
                 `;
             }
 
-            // 反饋區 (隱藏)
+            // 反饋區
             html += `
                     <div id="feedback" class="hidden mt-6 bg-slate-900 text-white p-5 rounded-2xl fade-in">
-                        <div id="result-status" class="font-black text-lg mb-2"></div>
-                        <div id="correct-ans-area" class="hidden mb-4">
-                            <h4 class="text-cyan-400 text-xs font-bold uppercase mb-1">正確答案：</h4>
-                            <p class="text-white text-sm bg-slate-800 p-3 rounded-lg border border-slate-700 mono leading-relaxed">${q.ans}</p>
+                        <div id="res-status" class="font-black text-lg mb-2"></div>
+                        <div id="handwriting-ans" class="hidden mb-4 border-t border-slate-700 pt-4">
+                            <h4 class="text-indigo-400 text-xs font-bold uppercase mb-1">參考正解：</h4>
+                            <p class="text-white text-sm bg-slate-800 p-3 rounded-lg border border-slate-700 leading-relaxed">${q.ans}</p>
                         </div>
-                        <div id="rationale-area">
-                            <h4 class="text-indigo-400 text-xs font-bold uppercase mb-1">詳解分析：</h4>
-                            <p id="rationale-text" class="text-slate-300 text-sm leading-relaxed"></p>
+                        <div class="mb-4">
+                            <h4 class="text-cyan-400 text-xs font-bold uppercase mb-1">詳解分析：</h4>
+                            <p id="rationale-text" class="text-slate-400 text-xs leading-relaxed"></p>
                         </div>
                         
-                        <!-- 手寫題專用的評分按鈕 -->
-                        <div id="self-grade-btns" class="hidden grid grid-cols-2 gap-3 mt-6">
-                            <button onclick="recordHandwriting(false)" class="bg-red-500/20 text-red-400 border border-red-500/50 py-3 rounded-xl font-bold hover:bg-red-500 hover:text-white transition">我答錯了</button>
-                            <button onclick="recordHandwriting(true)" class="bg-green-500 text-white py-3 rounded-xl font-bold shadow-lg shadow-green-500/30 hover:bg-green-600 transition">我答對了</button>
+                        <!-- 手寫題自我評分按鈕 -->
+                        <div id="grade-btns" class="hidden grid grid-cols-2 gap-3 mt-4">
+                            <button onclick="gradeHandwriting(false)" class="bg-red-500/20 text-red-400 border border-red-500/50 py-3 rounded-xl font-bold">我答錯了</button>
+                            <button onclick="gradeHandwriting(true)" class="bg-green-500 text-white py-3 rounded-xl font-bold shadow-lg">我答對了</button>
                         </div>
 
-                        <button id="next-btn" onclick="nextQuestion()" class="hidden mt-6 w-full bg-indigo-500 text-white font-bold py-4 rounded-xl hover:bg-indigo-600 transition">下一題 ➔</button>
+                        <button id="next-btn" onclick="nextStep()" class="hidden mt-4 w-full bg-indigo-500 text-white font-bold py-4 rounded-xl shadow-indigo-500/20 shadow-lg">下一題 ➔</button>
                     </div>
                 </div>
             `;
@@ -307,76 +277,73 @@
             view.innerHTML = html;
         }
 
-        // --- 處理選擇題 ---
-        function pickChoice(idx) {
+        // --- 選擇題處理 ---
+        function handleChoice(idx) {
             const q = state.currentBatch[state.batchIndex];
-            const chosen = q.randomOptions[idx];
-            const isCorrect = chosen.isCorrect;
+            const isCorrect = q.randomOptions[idx].isCorrect;
 
+            document.querySelectorAll('.opt-btn').forEach(b => b.disabled = true);
             const btns = document.querySelectorAll('.opt-btn');
-            btns.forEach(b => b.disabled = true);
-
             const feedback = document.getElementById('feedback');
-            const status = document.getElementById('result-status');
-            const ratText = document.getElementById('rationale-text');
-            const nextBtn = document.getElementById('next-btn');
+            const status = document.getElementById('res-status');
+            const rat = document.getElementById('rationale-text');
+            const next = document.getElementById('next-btn');
 
             if (isCorrect) {
                 state.score++;
                 btns[idx].classList.add('border-green-500', 'bg-green-50');
-                status.innerHTML = `<span class="text-green-400"><i class="fas fa-check-circle"></i> 恭喜答對！</span>`;
+                status.innerHTML = `<span class="text-green-400"><i class="fas fa-check-circle"></i> 答對了！</span>`;
                 if (state.wrongStats[q.id] > 0) state.wrongStats[q.id]--;
-                // 答對就從「未做過牌堆」移除
                 if (!state.doneIds.includes(q.id)) state.doneIds.push(q.id);
             } else {
                 btns[idx].classList.add('border-red-500', 'bg-red-50');
-                status.innerHTML = `<span class="text-red-400"><i class="fas fa-times-circle"></i> 不太對喔...</span>`;
+                status.innerHTML = `<span class="text-red-400"><i class="fas fa-times-circle"></i> 哎呀錯了...</span>`;
                 const correctIdx = q.randomOptions.findIndex(o => o.isCorrect);
                 btns[correctIdx].classList.add('border-green-500', 'bg-green-50', 'ring-2', 'ring-green-200');
                 state.wrongStats[q.id] = (state.wrongStats[q.id] || 0) + 1;
             }
 
-            ratText.innerText = q.rationale;
+            rat.innerText = q.rationale;
             feedback.classList.remove('hidden');
-            nextBtn.classList.remove('hidden');
+            next.classList.remove('hidden');
             save();
         }
 
-        // --- 處理手寫題 ---
-        function revealHandwritingAnswer() {
+        // --- 手寫題處理 ---
+        function handleRevealHandwriting() {
             const q = state.currentBatch[state.batchIndex];
-            const userInput = document.getElementById('handwritten-input').value.trim();
+            const input = document.getElementById('typing-box').value.trim();
             
-            if (!userInput) { if(!confirm("你還沒輸入答案，要直接看正解嗎？")) return; }
-
-            document.getElementById('handwritten-input').disabled = true;
-            document.getElementById('show-ans-btn').classList.add('hidden');
+            document.getElementById('typing-box').disabled = true;
+            document.getElementById('reveal-btn').classList.add('hidden');
 
             const feedback = document.getElementById('feedback');
-            const status = document.getElementById('result-status');
-            const ansArea = document.getElementById('correct-ans-area');
+            const status = document.getElementById('res-status');
+            const ansArea = document.getElementById('handwriting-ans');
             const ratText = document.getElementById('rationale-text');
-            const selfGradeBtns = document.getElementById('self-grade-btns');
+            const gradeBtns = document.getElementById('grade-btns');
 
-            // 簡易關鍵字檢查 (輔助判斷)
-            const foundKeywords = q.keywords.filter(k => userInput.includes(k));
-            const matchRate = foundKeywords.length / q.keywords.length;
+            // 關鍵字檢測
+            const found = q.keywords.filter(k => input.includes(k));
+            const rate = found.length / q.keywords.length;
 
-            status.innerHTML = `<span class="text-cyan-400"><i class="fas fa-search"></i> 關鍵字檢查中...</span>`;
-            if (matchRate === 1) {
-                status.innerHTML += `<div class="text-[10px] text-green-400 mt-1">偵測到所有關鍵字！</div>`;
-            } else if (matchRate > 0) {
-                status.innerHTML += `<div class="text-[10px] text-yellow-400 mt-1">偵測到部分關鍵字：${foundKeywords.join(', ')}</div>`;
+            status.innerHTML = `<span class="text-indigo-400"><i class="fas fa-search"></i> 比對完畢</span>`;
+            if (rate === 1) {
+                status.innerHTML += `<div class="text-[10px] text-green-400 mt-1">完美！偵測到所有關鍵字。</div>`;
+            } else if (rate > 0) {
+                status.innerHTML += `<div class="text-[10px] text-yellow-400 mt-1">部分正確，漏掉一些關鍵點。</div>`;
+            } else {
+                status.innerHTML += `<div class="text-[10px] text-red-400 mt-1">未偵測到關鍵字，請誠實自評。</div>`;
             }
 
             ansArea.classList.remove('hidden');
             ratText.innerText = q.rationale;
             feedback.classList.remove('hidden');
-            selfGradeBtns.classList.remove('hidden');
+            gradeBtns.classList.remove('hidden');
             feedback.scrollIntoView({ behavior: 'smooth' });
         }
 
-        function recordHandwriting(isCorrect) {
+        function gradeHandwriting(isCorrect) {
             const q = state.currentBatch[state.batchIndex];
             if (isCorrect) {
                 state.score++;
@@ -386,10 +353,10 @@
                 state.wrongStats[q.id] = (state.wrongStats[q.id] || 0) + 1;
             }
             save();
-            nextQuestion();
+            nextStep();
         }
 
-        function nextQuestion() {
+        function nextStep() {
             state.batchIndex++;
             if (state.batchIndex < state.currentBatch.length) {
                 renderQuiz();
@@ -407,23 +374,20 @@
                 .sort((a, b) => b.count - a.count);
 
             const listHtml = sorted.length === 0 
-                ? `<div class="text-center py-20 text-slate-400 flex flex-col items-center gap-4">
-                    <i class="fas fa-check-double text-5xl text-green-200"></i>
-                    <p class="font-bold">目前戰績輝煌，沒有任何錯題！</p>
-                   </div>`
+                ? `<div class="text-center py-24 text-slate-400 italic">目前無錯題，你已經是生化大師了！</div>`
                 : sorted.map((q, i) => `
-                    <div class="bg-white p-4 rounded-2xl shadow-sm border border-slate-100 flex gap-4 items-center group active:bg-slate-50 transition">
-                        <div class="w-10 h-10 rounded-xl ${i<3?'bg-red-500 text-white shadow-lg shadow-red-200':'bg-slate-100 text-slate-400'} flex items-center justify-center font-black italic">
+                    <div class="bg-white p-4 rounded-2xl shadow-sm border border-slate-100 flex gap-4 items-center mb-3">
+                        <div class="w-10 h-10 rounded-xl ${i<3?'bg-red-500 text-white shadow-lg':'bg-slate-100 text-slate-400'} flex items-center justify-center font-black">
                             ${i+1}
                         </div>
                         <div class="flex-grow">
                             <div class="flex justify-between items-center mb-1">
-                                <span class="text-[10px] font-black text-slate-400 uppercase tracking-tighter">${q.chapter}</span>
+                                <span class="text-[10px] font-black text-slate-400 uppercase">${q.chapter} | ${q.type==='multiple'?'選擇':'手寫'}</span>
                                 <span class="text-xs font-black text-red-500 bg-red-50 px-2 py-0.5 rounded-full">錯 ${q.count} 次</span>
                             </div>
                             <p class="text-sm font-bold text-slate-700 line-clamp-1">${q.q}</p>
                         </div>
-                        <button onclick="drillOne('${q.id}')" class="w-10 h-10 rounded-full bg-indigo-50 text-indigo-600 flex items-center justify-center hover:bg-indigo-600 hover:text-white transition">
+                        <button onclick="startSingleDrill('${q.id}')" class="w-10 h-10 rounded-full bg-indigo-50 text-indigo-600 flex items-center justify-center hover:bg-indigo-600 hover:text-white transition">
                             <i class="fas fa-bullseye"></i>
                         </button>
                     </div>
@@ -442,26 +406,24 @@
             `;
         }
 
-        function renderAllDone() {
+        function renderAllClear() {
             view.innerHTML = `
                 <div class="p-10 text-center flex flex-col items-center justify-center min-h-full space-y-6 fade-in">
-                    <div class="text-8xl">🏆</div>
-                    <h2 class="text-3xl font-black">傳說級成就：全清空！</h2>
-                    <p class="text-slate-500">所有的題目你都至少做對過一次了。這代表你的基礎已經非常穩固。</p>
-                    <button onclick="confirmReset()" class="bg-slate-900 text-white px-10 py-4 rounded-2xl font-bold shadow-2xl">重置所有進度，再來一輪</button>
-                    <button onclick="renderHome()" class="text-indigo-600 font-bold underline">回主頁面</button>
+                    <div class="text-8xl">🏅</div>
+                    <h2 class="text-3xl font-black">題庫完成！</h2>
+                    <p class="text-slate-500 leading-relaxed">恭喜！你已經成功解決了題庫中所有的題目。現在可以去殲滅排行榜中的殘餘錯題。</p>
+                    <button onclick="confirmReset()" class="bg-slate-900 text-white px-10 py-4 rounded-2xl font-bold shadow-2xl btn-active">重置進度，再來一次</button>
                 </div>
             `;
         }
 
         function confirmReset() {
-            if (confirm("確定要重置所有進度嗎？這會清除排行榜和所有的學習記錄喔！")) {
+            if (confirm("確定要重置所有進度嗎？（這會清除排行榜和所有做題記錄）")) {
                 localStorage.removeItem(DB_KEY);
                 location.reload();
             }
         }
 
-        // 初始化 App
         init();
     </script>
 </body>
