@@ -265,13 +265,11 @@ const questionLibrary = {
     }
 };
 
-const questionLibrary = {
-    "food_science": {
-        "title": "普通生物 (Biology)",
-               "questions": [
+    "biology": {  // 這裡的 Key 改成了 "biology"，不會跟食物學打架了
+        "title": "普通生物 (Biology)",
+        "questions": [
             // --- 選擇題 (Multiple Choice) ---
             {
-    {
         "id": "bio_ch08_01",
         "chapter": "細胞分裂",
         "type": "table_compare",
