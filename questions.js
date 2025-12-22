@@ -5,35 +5,35 @@
 
 const questionLibrary = {
     "food_science": {
-        "title": "食物學原理 (Food Science)",
+        "title": "食物學原理 (Food Science)"，
         "questions": [
             // --- 選擇題 (Multiple Choice) ---
             {
-                id: "fs_01",
-                chapter: "油脂化學",
-                type: "multiple",
-                q: "關於食用油脂的自氧化反應，下列何者與其無關？",
+                id: "fs_01"，
+                chapter: "油脂化學"，
+                type: "multiple"，
+                q: "關於食用油脂的自氧化反應，下列何者與其無關？"，
                 options: [
-                    "脂肪酸分子量大小", // 正確答案 (B)
-                    "脂肪酸不飽和程度",
-                    "光線",
+                    "脂肪酸分子量大小"， // 正確答案 (B)
+                    "脂肪酸不飽和程度"，
+                    "光線"，
                     "氧氣"
-                ],
+                ]，
                 rationale: "油脂自氧化主要取決於「不飽和程度」與「氧氣」接觸，光線會引發光敏感氧化。分子量大小並非決定氧化快慢的直接因素。"
-            },
+            }，
             {
-                id: "fs_02",
-                chapter: "油脂加工",
-                type: "multiple",
-                q: "大豆沙拉油純化過程，國內常省略下列哪個步驟？",
+                id: "fs_02"，
+                chapter: "油脂加工"，
+                type: "multiple"，
+                q: "大豆沙拉油純化過程，國內常省略下列哪個步驟？"，
                 options: [
-                    "冬化 (Winterization)", // 正確答案 (C)
-                    "脫膠 (Degumming)",
-                    "脫色 (Bleaching)",
+                    "冬化 (Winterization)"， // 正確答案 (C)
+                    "脫膠 (Degumming)"，
+                    "脫色 (Bleaching)"，
                     "脫臭 (Deodorization)"
-                ],
+                ]，
                 rationale: "冬化是為了去除高熔點三酸甘油酯，確保冷藏時不混濁。若油品非強調冷藏清澈度（如一般煎炸用），此步驟最可能被省略。"
-            },
+            }，
             {
                 id: "fs_03",
                 chapter: "酵素反應",
