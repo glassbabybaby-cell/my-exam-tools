@@ -5,35 +5,35 @@
 
 const questionLibrary = {
     "food_science": {
-        "title": "食物學原理 (Food Science)"，
+        "title": "食物學原理 (Food Science)",
         "questions": [
             // --- 選擇題 (Multiple Choice) ---
             {
-                id: "fs_01"，
-                chapter: "油脂化學"，
-                type: "multiple"，
-                q: "關於食用油脂的自氧化反應，下列何者與其無關？"，
+                id: "fs_01",
+                chapter: "油脂化學",
+                type: "multiple",
+                q: "關於食用油脂的自氧化反應，下列何者與其無關？",
                 options: [
-                    "脂肪酸分子量大小"， // 正確答案 (B)
-                    "脂肪酸不飽和程度"，
-                    "光線"，
+                    "脂肪酸分子量大小", // 正確答案 (B)
+                    "脂肪酸不飽和程度",
+                    "光線",
                     "氧氣"
-                ]，
+                ],
                 rationale: "油脂自氧化主要取決於「不飽和程度」與「氧氣」接觸，光線會引發光敏感氧化。分子量大小並非決定氧化快慢的直接因素。"
-            }，
+            },
             {
-                id: "fs_02"，
-                chapter: "油脂加工"，
-                type: "multiple"，
-                q: "大豆沙拉油純化過程，國內常省略下列哪個步驟？"，
+                id: "fs_02",
+                chapter: "油脂加工",
+                type: "multiple",
+                q: "大豆沙拉油純化過程，國內常省略下列哪個步驟？",
                 options: [
-                    "冬化 (Winterization)"， // 正確答案 (C)
-                    "脫膠 (Degumming)"，
-                    "脫色 (Bleaching)"，
+                    "冬化 (Winterization)", // 正確答案 (C)
+                    "脫膠 (Degumming)",
+                    "脫色 (Bleaching)",
                     "脫臭 (Deodorization)"
-                ]，
+                ],
                 rationale: "冬化是為了去除高熔點三酸甘油酯，確保冷藏時不混濁。若油品非強調冷藏清澈度（如一般煎炸用），此步驟最可能被省略。"
-            }，
+            },
             {
                 id: "fs_03",
                 chapter: "酵素反應",
@@ -216,7 +216,6 @@ const questionLibrary = {
                 ],
                 rationale: "葉綠素非常敏感，遇熱、遇酸都會迅速變色。類胡蘿蔔素則相對安定。"
             },
-
             // --- 簡答題 (Short Answer / Handwriting) ---
             {
                 id: "fs_sa_01",
@@ -255,8 +254,9 @@ const questionLibrary = {
                 rationale: "葉綠素怕酸，類胡蘿蔔素要配油吃，花青素會像石蕊試紙一樣變色。"
             }
         ]
-    }, // <--- 關鍵！這裡我幫妳加上逗號了，而且把門打開了
-
+    }, 
+    
+    // --- 普通生物學 (Biology) ---
     "biology": {
         "title": "普通生物 (Biology)",
         "questions": [
@@ -266,7 +266,7 @@ const questionLibrary = {
                 "type": "multiple",
                 "q": "比較有絲分裂與減數分裂的差異（以人類細胞為例）。",
                 "options": [
-                    "染色體複製次數：皆為 1 次", // 正確答案 (A)
+                    "染色體複製次數：皆為 1 次",
                     "分裂次數：有絲(1次)；減數(2次)",
                     "子細胞染色體數：有絲(2n)；減數(n)",
                     "遺傳關係：有絲(與親代相同)；減數(與親代不同)"
@@ -279,7 +279,7 @@ const questionLibrary = {
                 "type": "multiple",
                 "q": "假如一隻蚱蜢的小腸細胞中含有 24 條染色體，則這隻蚱蜢的精子中含有多少條染色體？",
                 "options": [
-                    "12 條", // 正確答案 (A)
+                    "12 條",
                     "6 條",
                     "24 條",
                     "48 條"
@@ -292,7 +292,7 @@ const questionLibrary = {
                 "type": "multiple",
                 "q": "下列何者「不是」有絲分裂在人體的功能？",
                 "options": [
-                    "從二倍體細胞產生配子", // 正確答案 (A)
+                    "從二倍體細胞產生配子",
                     "修補傷口",
                     "生長",
                     "替換缺失或損傷的細胞"
@@ -305,7 +305,7 @@ const questionLibrary = {
                 "type": "multiple",
                 "q": "在間期，細胞內的染色體不易觀察，這是因為：",
                 "options": [
-                    "它們以細長絲狀的染色質形式存在", // 正確答案 (A)
+                    "它們以細長絲狀的染色質形式存在",
                     "DNA 還沒有完成複製",
                     "它們離開細胞核且分散在細胞其他位置",
                     "同源染色體才配對在一起"
@@ -318,7 +318,7 @@ const questionLibrary = {
                 "type": "multiple",
                 "q": "一隻果蠅的體細胞含有 8 條染色體，則牠的配子可能出現多少種染色體組合方式？",
                 "options": [
-                    "16 種", // 正確答案 (A)
+                    "16 種",
                     "8 種",
                     "32 種",
                     "64 種"
@@ -331,7 +331,7 @@ const questionLibrary = {
                 "type": "multiple",
                 "q": "一條染色體斷裂的片段以相反方向再連接到原來的染色體上，所形成的染色體異常稱為：",
                 "options": [
-                    "倒轉 (Inversion)", // 正確答案 (A)
+                    "倒轉 (Inversion)",
                     "缺失 (Deletion)",
                     "易位 (Translocation)",
                     "染色體不分離"
@@ -344,7 +344,7 @@ const questionLibrary = {
                 "type": "multiple",
                 "q": "就細胞核的變化而言，有絲分裂的哪一個時期在本質上的改變，剛好與「前期」相反？",
                 "options": [
-                    "末期 (Telophase)", // 正確答案 (A)
+                    "末期 (Telophase)",
                     "中期 (Metaphase)",
                     "間期 (Interphase)",
                     "後期 (Anaphase)"
@@ -352,12 +352,12 @@ const questionLibrary = {
                 "rationale": "前期時核膜消失、染色體出現；末期則是核膜重新形成、染色體解螺旋變回染色質，變化過程互為相反。"
             },
             {
-                "id": "bio_ch08_08",
-                "chapter": "細胞分裂",
-                "type": "multiple",
-                "q": "一位生化學家在實驗室測量生長細胞內的 DNA 含量，結果發現 DNA 含量增為兩倍，因此可推測細胞正處於下列哪些時期？",
+                "id": "bio_ch08_08"，
+                "chapter": "細胞分裂"，
+                "type": "multiple"，
+                "q": "一位生化學家在實驗室測量生長細胞內的 DNA 含量，結果發現 DNA 含量增為兩倍，因此可推測細胞正處於下列哪些時期？"，
                 "options": [
-                    "細胞週期的 G1 和 G2 時期之間"， // 正確答案 (A)
+                    "細胞週期的 G1 和 G2 時期之間"，
                     "有絲分裂的前期和後期之間"，
                     "細胞週期的 M 時期"，
                     "減數分裂的前期 I 和前期 II 之間"
@@ -370,7 +370,7 @@ const questionLibrary = {
                 "type": "multiple"，
                 "q": "一張顯微照片可看見一個正在分裂的老鼠細胞含有 19 條染色體，每條又含有 2 條染色單體，該細胞處於哪一分裂時期？"，
                 "options": [
-                    "減數分裂的前期 II"， // 正確答案 (A)
+                    "減數分裂的前期 II"，
                     "有絲分裂的前期"，
                     "減數分裂的末期 II"，
                     "減數分裂的前期 I"
@@ -383,7 +383,7 @@ const questionLibrary = {
                 "type": "multiple"，
                 "q": "細胞鬆弛素 B (cytochalasin B) 是可以破壞微絲形成的藥劑，下列何者會受其干擾而無法作用？"，
                 "options": [
-                    "卵裂溝的形成"， // 正確答案 (A)
+                    "卵裂溝的形成"，
                     "DNA 複製"，
                     "有絲分裂紡錘體的形成"，
                     "細胞板的形成"
@@ -396,7 +396,7 @@ const questionLibrary = {
                 "type": "multiple"，
                 "q": "為什麼額外多一條第 21 對染色體的唐氏症患者，會比多一條第 3 對或第 16 對的人數還多？"，
                 "options": [
-                    "額外的第 3 或第 16 對染色體通常會致命"， // 正確答案 (A)
+                    "額外的第 3 或第 16 對染色體通常會致命"，
                     "第 21 對染色體比其他染色體含有更多基因"，
                     "第 21 對染色體是性染色體"，
                     "唐氏症症狀較輕微所以比較容易被觀察到"
